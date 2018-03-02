@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>search</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <label>Enter the directory url</label>
+            <input type="text" id="dir">
+            <button id="dirSubmit">Submit</button>
+            <div>
+                <p id="errMsg" class="err-msg">* Invalid url</p>
+                <p class="eg-msg">eg: D:\Document\profiles</p>
+            </div>
+            <div class="clear"></div>
+            <div class="file-container" id="fContainer">
+                <div class="conTitle">
+                    The doc file available in the directory:
+                </div>
+                <div id="dContainer" class="d-container"></div>
+            </div>
+            <div id="aContainer" class="action-container">
+                <label class="block-elm">Seach for skill set</label>
+                <input type="text" id="skill">
+                <button id="skillSubmit">Submit</button>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

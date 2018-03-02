@@ -1,0 +1,55 @@
+.container {
+    width: 800px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid grey;
+}
+
+.clear {
+    clear: both;
+}
+
+.err-msg {
+    color: red;
+    margin: 0 0 0 62px;
+    float: left;
+}
+
+.eg-msg {
+    float: right;
+    margin: 0 482px 0 0;
+    color: grey;
+}
+
+.file-container {
+    margin: 10px 0 0 0;
+    width: 35%;
+    height: 200px;
+    overflow: auto;
+    border: 2px solid grey;
+    float: left;
+}
+
+.file-container p {
+    margin: 2px 0;
+}
+
+.d-container {
+    padding: 0 10px 10px 10px;
+}
+
+.conTitle {
+    background: grey;
+    color: white;
+    padding: 0 0 0 10px;
+}
+
+.block-elm {
+    display: block;
+}
+
+.action-container {
+    float: left;
+    margin: 10px 0 0 20px;
+    padding: 20px 0 0 0;
+}

@@ -3,6 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const WordExtractor = require("word-extractor");
+var extractor = new WordExtractor();
+
+var matchedFiles =[];
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,10 +15,10 @@ app.post('/api/search', (req, res, next) => {
     var dir = req.body.dir;
     var lastChar = dir[dir.length - 1];
     if (lastChar == "\\") {
-        lastChar.slice(-1);
+        dir = dir.slice(0, -1);
     }
 
-    fs.readdir(req.body.dir, (err, files) => {
+    fs.readdir(dir, (err, files) => {
         var docFile = [];
         var otherFiles = [];
         files.forEach((file) => {
@@ -28,22 +32,46 @@ app.post('/api/search', (req, res, next) => {
 });
 
 app.post('/api/file', (req, res, next) => {
-    var files = req.body.files;
+    var file = req.body.file;
     var skill = req.body.skill;
     var dir = req.body.dir;
     var lastChar = dir[dir.length - 1];
     if (lastChar == "\\") {
-        lastChar.slice(-1);
+        dir = dir.slice(0, -1);
     }
-
-    fs.readFile(dir, (err, data) => {
-        if (err) throw err;
-        console.log(data)
-        res.json('hello');
-    })
-
+    var extracted = extractor.extract(dir+'/'+file);
+    extracted.then(function(doc) {
+       search(doc.getBody(), file, skill,(file, obj) => {
+        res.status(200).json(obj);
+       })
+      });
 });
 
-app.use('/', express.static('public'))
+function search (data, file, skill, callback) {
+    var angular1 = /angular(\s?js|\s?1\.[4-6x])?/i;
+    var react = /react(\s?js|.)/i;
+    if(skill === 'angular1') {
+        let res = angular1.test(data);
+        if(res) {
+            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular"});
+        }
+        else {
+            callback(file, {"msg":`${file} searched tech not available available`, "tech": ""});
+        }
+    } else if(skill === 'angular2') {
+
+    } else if(skill === 'react') {
+        let res = react.test(data);
+        if(res) {
+            callback(file, {"msg":`${file} searched tech stack available`, "tech": "react"});
+        }
+        else {
+            callback(file, {"msg":`${file} searched tech not available available`, "tech": ""});
+        }
+    }
+    
+}
+
+app.use('/', express.static('public'));
 const _port = 3000;
 app.listen(_port, () => console.log(`server running in port ${_port}`));

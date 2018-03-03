@@ -1,12 +1,24 @@
 $(document).ready(function() {
     $('#errMsg').hide();
-    $('#dContainer,#aContainer,#errMsgfram').hide();
+    $('#dContainer,#aContainer,#errMsgfram,#output-container').hide();
+
 });
 
 var files = [];
 var dir = '';
+// choose folder option
+// $('#get_file').click(function() {
+//     $('#my_file').click();
+//     $('#my_file').change(() => {
+//         var file    = $('#my_file');
+//         var reader  = new FileReader();
+//         var fileURL = reader.readAsDataURL(file);
+//         console.log(fileURL);
+//         $('#dir').val = fileURL;
+//     })  
+// });
 
-$('#dirSubmit').click((e) => {
+$('#dirSubmit').click(() => {
     dir = $('#dir').val();
     var pattern = /[a-zA-Z]:/gi;
     if (!dir) {
@@ -41,6 +53,9 @@ $('#skillSubmit').click(() => {
     else if (skill) {
         $('#errMsgfram').hide();
         $('#skillSubmit').attr("disabled", true);
+        $('#output-container').show();
+        $('#sucTitle').append(`${skill} skill matched files:`)
+        $('#failTitle').append("unmatched files")
         files.forEach((elem, index) => {
             if(patt.test(elem)) {
                 $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-spinner fa-spin"></i></span>');
@@ -48,9 +63,11 @@ $('#skillSubmit').click(() => {
                     if(status == "success") {
                         $(`#spin${index}`).remove();
                         if(response.tech) {
-                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-check-circle"></i></span>');                            
+                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-check-circle"></i></span>');
+                            $('#outSucFil').append(`<span style="padding:5px;"> ${response.file}, </span>`)                            
                         } else {
-                        $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: #fd7614; float: right;"><i class="fas fa-exclamation-circle"></i></span>');                            
+                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: #fd7614; float: right;"><i class="fas fa-exclamation-circle"></i></span>');                            
+                            $('#outFaiFil').append(`<span style="padding:5px;">${response.file}, </span>`)
                         }
                     }
                 })

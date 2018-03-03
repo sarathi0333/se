@@ -56,6 +56,13 @@
 
 .action-container {
     float: left;
-    margin: 10px 0 0 20px;
+    margin: 10px 20px 0 40px;
     padding: 20px 0 0 0;
+}
+
+.output-con {
+    border: 2px solid grey;
+    width: 450px;
+    display: block;
+    margin: 10px 0 0 0;
 }

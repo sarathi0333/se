@@ -7,6 +7,9 @@ const WordExtractor = require("word-extractor");
 var extractor = new WordExtractor();
 
 var matchedFiles =[];
+var angFolder = false;
+var recFolder = false;
+var otherFiles = [];
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +23,6 @@ app.post('/api/search', (req, res, next) => {
 
     fs.readdir(dir, (err, files) => {
         var docFile = [];
-        var otherFiles = [];
         files.forEach((file) => {
             if (path.extname(file) == '.doc' || path.extname(file) == '.docx')
                 docFile.push(file)
@@ -41,32 +43,50 @@ app.post('/api/file', (req, res, next) => {
     }
     var extracted = extractor.extract(dir+'/'+file);
     extracted.then(function(doc) {
-       search(doc.getBody(), file, skill,(file, obj) => {
+       search(doc.getBody(), dir, file, skill,(file, obj) => {
         res.status(200).json(obj);
        })
       });
 });
 
-function search (data, file, skill, callback) {
+function search (data, dir, file, skill, callback) {
     var angular1 = /angular(\s?js|\s?1\.[4-6x])?/i;
     var react = /react(\s?js|.)/i;
     if(skill === 'angular1') {
         let res = angular1.test(data);
+        otherFiles.forEach((item) => {
+            if(item == 'Angular')
+                angFolder = true;
+        })
         if(res) {
-            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular"});
+            if(angFolder === false) {
+                fs.mkdirSync(dir+'/Angular');
+                angFolder = true;
+            };
+            fs.copyFileSync(dir+'/'+file, dir+'/Angular/'+file);
+            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular", "file":file});
         }
         else {
-            callback(file, {"msg":`${file} searched tech not available available`, "tech": ""});
+            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
         }
     } else if(skill === 'angular2') {
 
     } else if(skill === 'react') {
         let res = react.test(data);
+        otherFiles.forEach((item) => {
+            if(item == 'React')
+                recFolder = true;
+        })
         if(res) {
-            callback(file, {"msg":`${file} searched tech stack available`, "tech": "react"});
+            if(recFolder === false) {
+                fs.mkdirSync(dir+'/React');
+                angFolder = true;
+            };
+            fs.copyFileSync(dir+'/'+file, dir+'/React/'+file);
+            callback(file, {"msg":`${file} searched tech stack available`, "tech": "react", "file":file});
         }
         else {
-            callback(file, {"msg":`${file} searched tech not available available`, "tech": ""});
+            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
         }
     }
     

@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#errMsg').hide();
-    $('#dContainer,#aContainer,#errMsgfram,#output-container').hide();
+    $('#dContainer,#aContainer,#errMsgfram,#output-container,#note,#note1').hide();
 
 });
 
@@ -25,10 +25,10 @@ $('#dirSubmit').click(() => {
         $('#errMsg').show();
         $('#dir').removeAttr('value');
     } 
-    // else if (!pattern.test(dir)) {
-    //     $('#errMsg').show();
-    //     $('#dir').removeAttr('value');
-    // } 
+    else if (!pattern.test(dir)) {
+        $('#errMsg').show();
+        $('#dir').removeAttr('value');
+    } 
     else {
         console.log(dir);
         $('#errMsg').hide();
@@ -62,11 +62,12 @@ $('#skillSubmit').click(() => {
                 $.post('/api/file', { skill, file:elem, dir }, function(response,status) {
                     if(status == "success") {
                         $(`#spin${index}`).remove();
+                        $('#note,#note1').show();
                         if(response.tech) {
                             $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-check-circle"></i></span>');
                             $('#outSucFil').append(`<span style="padding:5px;"> ${response.file}, </span>`)                            
                         } else {
-                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: #fd7614; float: right;"><i class="fas fa-exclamation-circle"></i></span>');                            
+                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: orange; float: right;"><i class="fas fa-exclamation-circle"></i></span>');                            
                             $('#outFaiFil').append(`<span style="padding:5px;">${response.file}, </span>`)
                         }
                     }

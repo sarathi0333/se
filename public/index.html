@@ -15,7 +15,7 @@
         <span style="float:right; color:grey">version: 0.1</span>
         <div>
             <label>Enter the directory url :</label>
-            <input type="text" id="dir"> or 
+            <input type="text" id="dir">
             <!-- <input type="button" id="get_file" value="choose folder">
             <input type="file" id="my_file" style="display:none;" webkitdirectory directory multiple/> -->
             <button id="dirSubmit">Submit</button>
@@ -46,13 +46,19 @@
                 <p style="margin:0; color:red;" id="errMsgfram"><sup>*</sup>Please select an option</p>
                 <div class="output-con" id="output-container">
                     <div class="conTitle" id="sucTitle"></div>
-                    <div class="d-container" style="height:120px;" id="outSucFil"></div>
+                    <div class="d-container" style="height:110px;" id="outSucFil"></div>
                     <div class="conTitle" id="failTitle"></div>
-                    <div class="d-container" style="height:120px;" id="outFaiFil"></div>
+                    <div class="d-container" style="height:110px;" id="outFaiFil"></div>
                 </div>
+                <p style="margin: 0" id="note">* matched files are copied to the respective folders</p>
+                <p style="margin:0" id="note1">
+                    <i class="fas fa-exclamation-circle" style="color:orange"></i> tech stack not matched
+                    <i class="fas fa-ban" style="color:red"></i>not supported
+                    <i class="fas fa-check-circle" style="color:green"></i>skill matched
+                </p>
             </div>
             <div class="clear"></div>
-            <p style="color:grey;">*Disclaimer: word files of .doc format are only supported. Works for windows directory path.</p>
+            <p style="color:grey;">*Disclaimer: Word files of .doc format are only supported. Works for windows directory path only. Tested in Latest Chrome Browser.</p>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

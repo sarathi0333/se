@@ -9,6 +9,7 @@ var extractor = new WordExtractor();
 var matchedFiles =[];
 var angFolder = false;
 var recFolder = false;
+var ang2Folder = false;
 var otherFiles = [];
 
 app.use(bodyParser.json());
@@ -51,6 +52,7 @@ app.post('/api/file', (req, res, next) => {
 
 function search (data, dir, file, skill, callback) {
     var angular1 = /angular(\s?js|\s?1\.[4-6x])?/i;
+    var angular2 = /angular(\s?[245]|\s?js\s?[245])/i;
     var react = /react(\s?js|.)/i;
     if(skill === 'angular1') {
         let res = angular1.test(data);
@@ -70,7 +72,22 @@ function search (data, dir, file, skill, callback) {
             callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
         }
     } else if(skill === 'angular2') {
-
+        let res = angular2.test(data);
+        otherFiles.forEach((item) => {
+            if(item == 'Angular_2+')
+                ang2Folder = true;
+        })
+        if(res) {
+            if(ang2Folder === false) {
+                fs.mkdirSync(dir+'/Angular_2+');
+                ang2Folder = true;
+            };
+            fs.copyFileSync(dir+'/'+file, dir+'/Angular_2+/'+file);
+            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular 2/4/5", "file":file});
+        }
+        else {
+            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
+        }
     } else if(skill === 'react') {
         let res = react.test(data);
         otherFiles.forEach((item) => {

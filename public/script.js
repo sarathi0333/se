@@ -24,12 +24,10 @@ $('#dirSubmit').click(() => {
     if (!dir) {
         $('#errMsg').show();
         $('#dir').removeAttr('value');
-    } 
-    else if (!pattern.test(dir)) {
+    } else if (!pattern.test(dir)) {
         $('#errMsg').show();
         $('#dir').removeAttr('value');
-    } 
-    else {
+    } else {
         console.log(dir);
         $('#errMsg').hide();
         $('#dirSubmit').attr("disabled", true);
@@ -47,35 +45,33 @@ $('#skillSubmit').click(() => {
     var patt = /\.doc$/i;
     var skill = $('#skill').val();
     console.log(skill);
-    if(!skill) {
+    if (!skill) {
         $('#errMsgfram').show();
-    }
-    else if (skill) {
+    } else if (skill) {
         $('#errMsgfram').hide();
         $('#skillSubmit').attr("disabled", true);
         $('#output-container').show();
         $('#sucTitle').append(`${skill} skill matched files:`)
         $('#failTitle').append("unmatched files")
         files.forEach((elem, index) => {
-            if(patt.test(elem)) {
-                $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-spinner fa-spin"></i></span>');
-                $.post('/api/file', { skill, file:elem, dir }, function(response,status) {
-                    if(status == "success") {
+            if (patt.test(elem)) {
+                $(`#fl${index}`).append('<span id = "spin' + index + '" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-spinner fa-spin"></i></span>');
+                $.post('/api/file', { skill, file: elem, dir }, function(response, status) {
+                    if (status == "success") {
                         $(`#spin${index}`).remove();
                         $('#note,#note1').show();
-                        if(response.tech) {
-                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-check-circle"></i></span>');
-                            $('#outSucFil').append(`<span style="padding:5px;"> ${response.file}, </span>`)                            
+                        if (response.tech) {
+                            $(`#fl${index}`).append('<span id = "spin' + index + '" style = "padding-left: 20px; color: green; float: right;"><i class="fas fa-check-circle"></i></span>');
+                            $('#outSucFil').append(`<span style="padding:5px;"> ${response.file}, </span>`)
                         } else {
-                            $(`#fl${index}`).append('<span id = "spin'+index+'" style = "padding-left: 20px; color: orange; float: right;"><i class="fas fa-exclamation-circle"></i></span>');                            
+                            $(`#fl${index}`).append('<span id = "spin' + index + '" style = "padding-left: 20px; color: orange; float: right;"><i class="fas fa-exclamation-circle"></i></span>');
                             $('#outFaiFil').append(`<span style="padding:5px;">${response.file}, </span>`)
                         }
                     }
                 })
-            }
-            else if (!patt.test(elem)){
+            } else if (!patt.test(elem)) {
                 $(`#fl${index}`).append('<span style = "padding-left: 20px; float: right; color: red;"><i class="fas fa-ban"></i></span>');
-            }  
+            }
         });
     }
 })

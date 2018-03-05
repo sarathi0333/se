@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const fs = require('fs-extra')
 const path = require('path');
 const WordExtractor = require("word-extractor");
 var extractor = new WordExtractor();
 
-var matchedFiles =[];
+var matchedFiles = [];
 var angFolder = false;
 var recFolder = false;
 var ang2Folder = false;
@@ -38,75 +38,89 @@ app.post('/api/file', (req, res, next) => {
     var file = req.body.file;
     var skill = req.body.skill;
     var dir = req.body.dir;
+    console.log(req.body);
     var lastChar = dir[dir.length - 1];
     if (lastChar == "\\") {
         dir = dir.slice(0, -1);
     }
-    var extracted = extractor.extract(dir+'/'+file);
+    var extracted = extractor.extract(dir + '\\' + file);
     extracted.then(function(doc) {
-       search(doc.getBody(), dir, file, skill,(file, obj) => {
-        res.status(200).json(obj);
-       })
-      });
+        search(doc.getBody(), dir, file, skill, (file, obj) => {
+            res.status(200).json(obj);
+        })
+    });
 });
 
-function search (data, dir, file, skill, callback) {
+function search(data, dir, file, skill, callback) {
     var angular1 = /angular(\s?js|\s?1\.[4-6x])?/i;
     var angular2 = /angular(\s?[245]|\s?js\s?[245])/i;
-    var react = /react(\s?js|.)/i;
-    if(skill === 'angular1') {
+    var react = /react(\s?js|)/i;
+    if (skill === 'angular1') {
         let res = angular1.test(data);
         otherFiles.forEach((item) => {
-            if(item == 'Angular')
+            if (item == 'Angular')
                 angFolder = true;
         })
-        if(res) {
-            if(angFolder === false) {
-                fs.mkdirSync(dir+'/Angular');
+        if (res) {
+            if (angFolder === false) {
+                fs.ensureDirSync(dir + '\\' + 'Angular');
                 angFolder = true;
-            };
-            fs.copyFileSync(dir+'/'+file, dir+'/Angular/'+file);
-            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular", "file":file});
+            }
+            try {
+                fs.copySync(dir + '\\' + file, dir + '\\Angular\\' + file);
+                console.log('success!')
+            } catch (err) {
+                console.error(err)
+            }
+            callback(file, { "msg": `${file} searched tech stack available`, "tech": "angular", "file": file });
+        } else {
+            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
         }
-        else {
-            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
-        }
-    } else if(skill === 'angular2') {
+    } else if (skill === 'angular2') {
         let res = angular2.test(data);
         otherFiles.forEach((item) => {
-            if(item == 'Angular_2+')
+            if (item == 'Angular_2+')
                 ang2Folder = true;
         })
-        if(res) {
-            if(ang2Folder === false) {
-                fs.mkdirSync(dir+'/Angular_2+');
+        if (res) {
+            if (ang2Folder === false) {
+                fs.ensureDirSync(dir + '\\Angular_2+');
                 ang2Folder = true;
             };
-            fs.copyFileSync(dir+'/'+file, dir+'/Angular_2+/'+file);
-            callback(file, {"msg":`${file} searched tech stack available`, "tech": "angular 2/4/5", "file":file});
+            try {
+                fs.copySync(dir + '\\' + file, dir + '\\Angular_2+\\' + file);
+                console.log('success!')
+            } catch (err) {
+                console.error(err)
+            }
+            callback(file, { "msg": `${file} searched tech stack available`, "tech": "angular 2/4/5", "file": file });
+        } else {
+            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
         }
-        else {
-            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
-        }
-    } else if(skill === 'react') {
+    } else if (skill === 'react') {
         let res = react.test(data);
+        console.log(res);
         otherFiles.forEach((item) => {
-            if(item == 'React')
+            if (item == 'React')
                 recFolder = true;
         })
-        if(res) {
-            if(recFolder === false) {
-                fs.mkdirSync(dir+'/React');
+        if (res) {
+            if (recFolder === false) {
+                fs.ensureDirSync(dir + '\\React');
                 angFolder = true;
             };
-            fs.copyFileSync(dir+'/'+file, dir+'/React/'+file);
-            callback(file, {"msg":`${file} searched tech stack available`, "tech": "react", "file":file});
-        }
-        else {
-            callback(file, {"msg":`${file} searched tech not available available`, "tech": "", "file":file});
+            try {
+                fs.copySync(dir + '\\' + file, dir + '\\React\\' + file);
+                console.log('success!')
+            } catch (err) {
+                console.error(err)
+            }
+            callback(file, { "msg": `${file} searched tech stack available`, "tech": "react", "file": file });
+        } else {
+            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
         }
     }
-    
+
 }
 
 app.use('/', express.static('public'));

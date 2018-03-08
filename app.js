@@ -4,16 +4,22 @@ const bodyParser = require('body-parser');
 const fs = require('fs-extra')
 const path = require('path');
 const WordExtractor = require("word-extractor");
+const textract = require('textract');
 var extractor = new WordExtractor();
+
 
 var matchedFiles = [];
 var angFolder = false;
 var recFolder = false;
 var ang2Folder = false;
 var otherFiles = [];
+var newFile = '';
+var tempdir = '';
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.post('/api/search', (req, res, next) => {
     var dir = req.body.dir;
@@ -25,12 +31,15 @@ app.post('/api/search', (req, res, next) => {
     fs.readdir(dir, (err, files) => {
         var docFile = [];
         files.forEach((file) => {
-            if (path.extname(file) == '.doc' || path.extname(file) == '.docx')
+            if (path.extname(file) == '.doc' || path.extname(file) == '.docx') {
                 docFile.push(file)
-            else
+            } else
                 otherFiles.push(file);
         })
-        res.json({ "docFile": docFile, "otherFiles": otherFiles });
+        res.json({
+            "docFile": docFile,
+            "otherFiles": otherFiles
+        });
     })
 });
 
@@ -43,12 +52,20 @@ app.post('/api/file', (req, res, next) => {
     if (lastChar == "\\") {
         dir = dir.slice(0, -1);
     }
-    var extracted = extractor.extract(dir + '\\' + file);
-    extracted.then(function(doc) {
-        search(doc.getBody(), dir, file, skill, (file, obj) => {
-            res.status(200).json(obj);
+    if (/\.docx$/i.test(file)) {
+        textract.fromFileWithPath(`${dir}${path.sep}${file}`, function(error, text) {
+            search(text, dir, file, skill, (file, obj) => {
+                res.status(200).json(obj);
+            })
         })
-    });
+    } else {
+        var extracted = extractor.extract(dir + '\\' + file);
+        extracted.then(function(doc) {
+            search(doc.getBody(), dir, file, skill, (file, obj) => {
+                res.status(200).json(obj);
+            })
+        });
+    }
 });
 
 function search(data, dir, file, skill, callback) {
@@ -72,9 +89,17 @@ function search(data, dir, file, skill, callback) {
             } catch (err) {
                 console.error(err)
             }
-            callback(file, { "msg": `${file} searched tech stack available`, "tech": "angular", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech stack available`,
+                "tech": "angular",
+                "file": file
+            });
         } else {
-            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech not available available`,
+                "tech": "",
+                "file": file
+            });
         }
     } else if (skill === 'angular2') {
         let res = angular2.test(data);
@@ -93,9 +118,17 @@ function search(data, dir, file, skill, callback) {
             } catch (err) {
                 console.error(err)
             }
-            callback(file, { "msg": `${file} searched tech stack available`, "tech": "angular 2/4/5", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech stack available`,
+                "tech": "angular 2/4/5",
+                "file": file
+            });
         } else {
-            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech not available available`,
+                "tech": "",
+                "file": file
+            });
         }
     } else if (skill === 'react') {
         let res = react.test(data);
@@ -115,9 +148,17 @@ function search(data, dir, file, skill, callback) {
             } catch (err) {
                 console.error(err)
             }
-            callback(file, { "msg": `${file} searched tech stack available`, "tech": "react", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech stack available`,
+                "tech": "react",
+                "file": file
+            });
         } else {
-            callback(file, { "msg": `${file} searched tech not available available`, "tech": "", "file": file });
+            callback(file, {
+                "msg": `${file} searched tech not available available`,
+                "tech": "",
+                "file": file
+            });
         }
     }
 

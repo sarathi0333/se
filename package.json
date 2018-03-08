@@ -13,6 +13,7 @@
     "express": "^4.16.2",
     "fs-extra": "^5.0.0",
     "path": "^0.12.7",
+    "textract": "^2.2.0",
     "word-extractor": "^0.1.4"
   }
 }
